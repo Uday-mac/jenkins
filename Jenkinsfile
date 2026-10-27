@@ -46,7 +46,7 @@ pipeline {
                    url: "${BUILD_URL}"
                    EOF
                 '''
-                archiveArtifacts artifacts: 'deploy-info-${BUILD_NUMBER}.txt', fingerprint: true, followSymlinks: false
+                archiveArtifacts artifacts: "deploy-info-${BUILD_NUMBER}.txt", fingerprint: true, followSymlinks: false
             }
         }
         stage("accessing the app") {
