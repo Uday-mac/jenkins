@@ -36,12 +36,28 @@ pipeline {
                     docker pull "$IMAGE:latest"
                     docker rm -f "$IMAGE_NAME" || true
                     docker run -d -p 5000:5000 --name "$IMAGE_NAME" "$IMAGE:latest"'''
+
+                sh '''echo "Deployment-file..."
+                   cat > deploy-info-"$BUILD_NUMBER".txt <<EOF 
+                   build: "${BUILD_NUMBER}"
+                   image: "$IMAGE:$TAG"
+                   commit: "${GIT_COMMIT}"
+                   branch: "${GIT_BRANCH}"
+                   url: "${BUILD_URL}"
+                   EOF
+                '''
+                archiveArtifacts artifacts: 'deploy-info-"$BUILD_NUMBER".txt', fingerprint: true, followSymlinks: false
             }
         }
         stage("accessing the app") {
             steps {
                 sh 'sleep 10'
                 sh 'echo "http://100.62.100.191:5000"'
+            }
+        }
+        stage("Cleanup") {
+            steps {
+                cleanWs()
             }
         }
     }
